@@ -22,7 +22,7 @@ role   = aws_iam_role.lambda_exec_role.name
 policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-# Allow lambda to talk to dynamo
+# Policy to allow lambda to talk to dynamo
 resource "aws_iam_policy" "dynamo_policy" {
   name = "lambda-dynamodb-policy"
   policy = jsonencode({
@@ -35,7 +35,7 @@ resource "aws_iam_policy" "dynamo_policy" {
   })
 }
 
-
+# Attach above policy to lambda exec role
 resource "aws_iam_role_policy_attachment" "lambda_dynamo_attach" {
   role       = aws_iam_role.lambda_exec_role.name
   policy_arn = aws_iam_policy.dynamo_policy.arn

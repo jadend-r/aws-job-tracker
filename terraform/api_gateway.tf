@@ -3,26 +3,44 @@ resource "aws_api_gateway_rest_api" "api" {
   name = "JobTrackerAPI"
 }
 
-# /applications resource
-resource "aws_api_gateway_resource" "applications" {
+# proxy resource to catch all paths
+resource "aws_api_gateway_resource" "proxy" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
-  path_part   = "applications"
+  path_part   = "{proxy+}"
 }
 
-# GET for /applications
-resource "aws_api_gateway_method" "get" {
+# ANY method for proxy resource
+resource "aws_api_gateway_method" "proxy_any" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.applications.id
-  http_method   = "GET"
+  resource_id   = aws_api_gateway_resource.proxy.id
+  http_method   = "ANY"
   authorization = "NONE"
 }
 
-# Set gateway to integrate with job tracker lambda as a proxy
-resource "aws_api_gateway_integration" "lambda_integration" {
+# connect proxy resource to lambda
+resource "aws_api_gateway_integration" "proxy_lambda" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.applications.id
-  http_method             = aws_api_gateway_method.get.http_method
+  resource_id             = aws_api_gateway_resource.proxy.id
+  http_method             = aws_api_gateway_method.proxy_any.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.job_tracker_lambda.invoke_arn
+}
+
+# root (/) resource also supports ANY
+resource "aws_api_gateway_method" "root_any" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_rest_api.api.root_resource_id
+  http_method   = "ANY"
+  authorization = "NONE"
+}
+
+# connect root resource to lambda
+resource "aws_api_gateway_integration" "root_lambda" {
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_rest_api.api.root_resource_id
+  http_method             = aws_api_gateway_method.root_any.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.job_tracker_lambda.invoke_arn
@@ -40,9 +58,16 @@ resource "aws_lambda_permission" "api_gateway_permission" {
 resource "aws_api_gateway_deployment" "deployment" {
   rest_api_id = aws_api_gateway_rest_api.api.id
 
+  # Re-deploy if integrations or methods change
   triggers = {
-    redeployment = sha1(jsonencode(aws_api_gateway_integration.lambda_integration))
+    redeployment = sha1(jsonencode({
+      proxy_integration = aws_api_gateway_integration.proxy_lambda.id
+      root_integration  = aws_api_gateway_integration.root_lambda.id
+      proxy_method      = aws_api_gateway_method.proxy_any.id
+      root_method       = aws_api_gateway_method.root_any.id
+    }))
   }
+
 
   lifecycle {
     create_before_destroy = true
@@ -57,5 +82,5 @@ resource "aws_api_gateway_stage" "prod" {
 }
 
 output "full_api_url" {
-  value = "https://${aws_api_gateway_rest_api.api.id}.execute-api.us-east-1.amazonaws.com/prod/applications"
+  value = "https://${aws_api_gateway_rest_api.api.id}.execute-api.us-east-1.amazonaws.com/prod/jobs"
 }
