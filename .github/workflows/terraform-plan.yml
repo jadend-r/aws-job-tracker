@@ -9,6 +9,7 @@ on:
 jobs:
   plan:
     runs-on: ubuntu-latest
+    environment: production
     env:
       AWS_REGION: us-east-1
 
