@@ -5,6 +5,7 @@ const { getJobs, getJobById, createJob, updateJob, deleteJob } = require('./rout
 // Custom lambdalith router
 exports.handler = async (event) => {
   const { httpMethod, path } = event;
+  path = path.replace(/^\/[^/]+/, ''); // normalize e.g: "/prod/jobs" → "/jobs"
 
   // Static routes
   if (httpMethod === 'GET' && path === '/jobs') return getJobs(event);
