@@ -1,13 +1,7 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { getJobs } from "../api/jobs";
 import { Job } from "../types/job";
 import AddJobModal from "../components/AddJobModal";
-
-const dummyJobs: Job[] = [
-    { company: 'Amazon', position: 'SWE I', status: 'Applied', dateApplied: '2025-04-01' },
-    { company: 'Google', position: 'Intern', status: 'Offer', dateApplied: '2025-03-20' },
-    { company: 'Meta', position: 'Backend Engineer', status: 'Interview', dateApplied: '2025-04-10' },
-    { company: 'Netflix', position: 'Platform Engineer', status: 'Rejected', dateApplied: '2025-03-28' },
-];
 
 const statusColors: Record<Job['status'], string> = {
     Applied: 'bg-blue-100 text-blue-700',
@@ -17,13 +11,18 @@ const statusColors: Record<Job['status'], string> = {
 };
 
 const Dashboard = () => {
-    const [jobs, setJobs] = useState(dummyJobs);
-    const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
+    const [jobs, setJobs] = useState<Job[]>([]);
+    const [isAddJobModalOpen, setIsAddJobModalOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const total = jobs.length;
     const interviews = jobs.filter(j => j.status === 'Interview').length;
     const offers = jobs.filter(j => j.status === 'Offer').length;
     const rejected = jobs.filter(j => j.status === 'Rejected').length;
+
+    useEffect(() => {
+        getJobs().then(setJobs).finally(() => {setIsLoading(false)});
+    }, []);
 
     const handleAddJob = (job: Job) => {
         setJobs([...jobs, job]);
