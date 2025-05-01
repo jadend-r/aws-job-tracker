@@ -7,6 +7,8 @@ exports.handler = async (event) => {
   const { httpMethod, path } = event;
   path = path.replace(/^\/[^/]+/, ''); // normalize e.g: "/prod/jobs" → "/jobs"
 
+  console.log(JSON.stringify(event, null, 2));
+
   // Static routes
   if (httpMethod === 'GET' && path === '/jobs') return getJobs(event);
   if (httpMethod === 'POST' && path === '/jobs') return createJob(event);
