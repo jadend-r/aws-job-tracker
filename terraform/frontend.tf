@@ -2,10 +2,6 @@
 resource "aws_s3_bucket" "frontend" {
   bucket = "aws-job-tracker-frontend-prod" 
   force_destroy = true              # Destroys bucket even if non-empty
-
-   lifecycle {
-    ignore_changes = [website]
-  }
 }
 
 # Enable static website hosting
