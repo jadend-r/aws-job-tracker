@@ -9,6 +9,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      REACT_APP_API_BASE: ${{ secrets.REACT_APP_API_BASE }}
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v3
