@@ -21,7 +21,7 @@ const Dashboard = () => {
     const rejected = jobs.filter(j => j.status === 'Rejected').length;
 
     useEffect(() => {
-        getJobs().then(setJobs).finally(() => {setIsLoading(false)});
+        getJobs().then(setJobs).finally(() => {/*setIsLoading(false)*/});
     }, []);
 
     const handleAddJob = (job: Job) => {
