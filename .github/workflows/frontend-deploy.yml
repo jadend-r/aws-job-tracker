@@ -19,11 +19,11 @@ jobs:
           node-version: 18
 
       - name: 📦 Install Dependencies
-        run: |
-          cd frontend
-          npm ci
+        working-directory: frontend
+        run: npm ci
 
       - name: 🛠️ Build Frontend
+        working-directory: frontend
         run: npm run build
 
       - name: 🔐 Configure AWS Credentials
