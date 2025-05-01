@@ -1,7 +1,7 @@
-name: Terraform Apply (Manual)
+name: Terraform Apply
 
 on:
-  workflow_dispatch:  # 👈 Only runs when you manually trigger it
+  workflow_dispatch:  # Only runs upon manual dispatch
 
 jobs:
   apply:
