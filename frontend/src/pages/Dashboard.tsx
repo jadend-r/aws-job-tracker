@@ -13,7 +13,7 @@ const statusColors: Record<Job['status'], string> = {
 const Dashboard = () => {
     const [jobs, setJobs] = useState<Job[]>([]);
     const [isAddJobModalOpen, setIsAddJobModalOpen] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    //const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const total = jobs.length;
     const interviews = jobs.filter(j => j.status === 'Interview').length;
