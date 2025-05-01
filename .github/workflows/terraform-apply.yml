@@ -27,7 +27,7 @@ jobs:
       - name: 📦 Zip Lambda code
         run: |
           cd lambda/node
-          zip -r ../../lambda.zip .
+          zip -r job_tracker_lambda.zip .
 
       - name: 🧠 Terraform Init
         working-directory: terraform
