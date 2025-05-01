@@ -4,8 +4,8 @@ const { getJobs, getJobById, createJob, updateJob, deleteJob } = require('./rout
 
 // Custom lambdalith router
 exports.handler = async (event) => {
-  const { httpMethod, path } = event;
-  path = path.replace(/^\/[^/]+/, ''); // normalize e.g: "/prod/jobs" → "/jobs"
+  const { httpMethod } = event;
+  const path = event.path.replace(/^\/[^/]+/, ''); // normalize e.g: "/prod/jobs" → "/jobs"
 
   console.log(JSON.stringify(event, null, 2));
 
