@@ -19,7 +19,9 @@ jobs:
           node-version: 18
 
       - name: 📦 Install Dependencies
-        run: npm ci
+        run: |
+          cd frontend
+          npm ci
 
       - name: 🛠️ Build Frontend
         run: npm run build
