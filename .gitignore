@@ -7,3 +7,4 @@ node_modules/
 lambda/package-lock.json
 terraform/.terraform.lock.hcl
 lambda/node/package-lock.json
+frontend/.env
