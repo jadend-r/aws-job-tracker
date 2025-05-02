@@ -1,4 +1,4 @@
-import { defaultHeaders } from "../lib/response";
+const { defaultHeaders } = require("../lib/response");
 
 let fakeDB = [
     { id: 1, company: 'Amazon', role: 'SWE', status: 'Applied', dateApplied: '2025-04-01' },

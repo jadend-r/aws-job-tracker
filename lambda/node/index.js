@@ -1,4 +1,4 @@
-import { defaultHeaders } from './lib/response.js';
+const { defaultHeaders } = require('./lib/response.js');
 
 const { getJobs, getJobById, createJob, updateJob, deleteJob } = require('./routes/jobs.ts');
 //const { getStats } = require('./routes/stats');
