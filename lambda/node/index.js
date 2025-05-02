@@ -1,3 +1,5 @@
+import { defaultHeaders } from './lib/response.js';
+
 const { getJobs, getJobById, createJob, updateJob, deleteJob } = require('./routes/jobs.ts');
 //const { getStats } = require('./routes/stats');
 //const { healthCheck } = require('./routes/health');
@@ -8,7 +10,14 @@ exports.handler = async (event) => {
   const path = event.pathParameters?.proxy ? `/${event.pathParameters.proxy}` : '/';
 
 
-  console.log(JSON.stringify(event, null, 2));
+  // Options
+  if (httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: defaultHeaders,
+      body: '',
+    };
+  }
 
   // Static routes
   if (httpMethod === 'GET' && path === '/jobs') return getJobs(event);

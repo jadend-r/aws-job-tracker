@@ -1,9 +1,12 @@
+import { defaultHeaders } from "../lib/response";
+
 let fakeDB = [
     { id: 1, company: 'Amazon', role: 'SWE', status: 'Applied', dateApplied: '2025-04-01' },
   ];
   
   exports.getJobs = async () => ({
     statusCode: 200,
+    defaultHeaders,
     body: JSON.stringify(fakeDB),
   });
   
