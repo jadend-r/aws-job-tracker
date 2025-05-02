@@ -1,4 +1,4 @@
-const { defaultHeaders } = require("../lib/response");
+const { defaultHeaders } = require("../lib/response.js");
 
 let fakeDB = [
     { id: 1, company: 'Amazon', role: 'SWE', status: 'Applied', dateApplied: '2025-04-01' },
