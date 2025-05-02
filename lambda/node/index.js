@@ -1,6 +1,6 @@
 const { defaultHeaders } = require('./lib/response.js');
 
-const { getJobs, getJobById, createJob, updateJob, deleteJob } = require('./routes/jobs.ts');
+const { getJobs, getJobById, createJob, updateJob, deleteJob } = require('./routes/jobs.js');
 //const { getStats } = require('./routes/stats');
 //const { healthCheck } = require('./routes/health');
 
