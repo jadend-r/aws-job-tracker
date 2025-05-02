@@ -6,7 +6,7 @@ let fakeDB = [
   
   exports.getJobs = async () => ({
     statusCode: 200,
-    defaultHeaders,
+    headers: defaultHeaders,
     body: JSON.stringify(fakeDB),
   });
   
