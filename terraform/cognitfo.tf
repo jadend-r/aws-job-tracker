@@ -37,8 +37,8 @@ resource "aws_cognito_user_pool_client" "frontend_app" {
   allowed_oauth_scopes = ["email", "openid", "profile"]
   allowed_oauth_flows_user_pool_client = true
 
-  callback_urls = ["http://aws-job-tracker-frontend-prod.s3-website-us-east-1.amazonaws.com/login-redirect"] #TODO: make env var
-  logout_urls   = ["http://aws-job-tracker-frontend-prod.s3-website-us-east-1.amazonaws.com"]
+  callback_urls = ["https://dcli3b34ssmw2.cloudfront.net/login-redirect"] #TODO: make env var
+  logout_urls   = ["https://dcli3b34ssmw2.cloudfront.net"]
   supported_identity_providers = ["COGNITO"]
 }
 
@@ -62,5 +62,5 @@ output "cognito_app_client_id" {
 }
 
 output "cognito_login_url" {
-  value = "https://${aws_cognito_user_pool_domain.main.domain}.auth.us-east-1.amazoncognito.com/login?response_type=token&client_id=${aws_cognito_user_pool_client.frontend_app.id}&redirect_uri=http://aws-job-tracker-frontend-prod.s3-website-us-east-1.amazonaws.com/login-redirect"
+  value = "https://${aws_cognito_user_pool_domain.main.domain}.auth.us-east-1.amazoncognito.com/login?response_type=token&client_id=${aws_cognito_user_pool_client.frontend_app.id}&redirect_uri=https://dcli3b34ssmw2.cloudfront.net/login-redirect"
 }
