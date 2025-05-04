@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Login_Redirect() {
+export default function LoginRedirect() {
   const navigate = useNavigate();
 
   useEffect(() => {
