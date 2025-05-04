@@ -15,7 +15,8 @@ resource "aws_api_gateway_method" "proxy_any" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.proxy.id
   http_method   = "ANY"
-  authorization = "NONE"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.cognito.id
 }
 
 # connect proxy resource to lambda
@@ -80,6 +81,15 @@ resource "aws_api_gateway_stage" "prod" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   stage_name    = "prod"
 }
+
+resource "aws_api_gateway_authorizer" "cognito" {
+  name            = "job-tracker-auth"
+  rest_api_id     = aws_api_gateway_rest_api.api.id
+  identity_source = "method.request.header.Authorization"
+  type            = "COGNITO_USER_POOLS"
+  provider_arns   = [aws_cognito_user_pool.main.arn]
+}
+
 
 output "full_api_url" {
   value = "https://${aws_api_gateway_rest_api.api.id}.execute-api.us-east-1.amazonaws.com/prod/jobs"
