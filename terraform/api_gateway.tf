@@ -37,7 +37,7 @@ resource "aws_api_gateway_integration" "proxy_lambda" {
 }
 
 # Add unauthenticated OPTIONS method to /api/{proxy+} for CORS preflight
-resource "aws_api_gateway_method" "api_proxy_options" {
+resource "aws_api_gateway_method" "api_proxy_options_method" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.api_proxy.id
   http_method   = "OPTIONS"
@@ -45,10 +45,10 @@ resource "aws_api_gateway_method" "api_proxy_options" {
 }
 
 # Mock response for OPTIONS method
-resource "aws_api_gateway_integration" "api_proxy_options" {
+resource "aws_api_gateway_integration" "api_proxy_options_integration" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
   resource_id             = aws_api_gateway_resource.api_proxy.id
-  http_method             = aws_api_gateway_method.api_proxy_options.http_method
+  http_method             = aws_api_gateway_method.api_proxy_options_method.http_method
   type                    = "MOCK"
   integration_http_method = "POST"
   passthrough_behavior    = "NEVER"
@@ -58,10 +58,10 @@ resource "aws_api_gateway_integration" "api_proxy_options" {
 }
 
 # Add CORS headers to mock response
-resource "aws_api_gateway_integration_response" "api_proxy_options" {
+resource "aws_api_gateway_integration_response" "api_proxy_options_integration_response" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.api_proxy.id
-  http_method = aws_api_gateway_method.api_proxy_options.http_method
+  http_method = aws_api_gateway_method.api_proxy_options_method.http_method
   status_code = "200"
 
   response_parameters = {
@@ -76,10 +76,10 @@ resource "aws_api_gateway_integration_response" "api_proxy_options" {
 }
 
 # Allow headers to be returned in response
-resource "aws_api_gateway_method_response" "api_proxy_options" {
+resource "aws_api_gateway_method_response" "api_proxy_options_method_response" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.api_proxy.id
-  http_method = aws_api_gateway_method.api_proxy_options.http_method
+  http_method = aws_api_gateway_method.api_proxy_options_method.http_method
   status_code = "200"
 
   response_parameters = {
