@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Job } from '../types/job';
+import type { Job } from '../types/job';
 
 type Props = {
   isOpen: boolean;

@@ -1,20 +1,15 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getCurrentUser } from '@aws-amplify/auth';
 
 export default function LoginRedirect() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const hash = window.location.hash;
-    const params = new URLSearchParams(hash.substring(1));
-    const token = params.get('id_token') || params.get('access_token');
-    if (token) {
-      localStorage.setItem('authToken', token);
-      navigate('/dashboard');
-    } else {
-      navigate('/');
-    }
+    getCurrentUser()
+      .then(() => navigate('/dashboard'))
+      .catch(() => navigate('/'));
   }, [navigate]);
 
-  return <p>Logging you in...</p>;
+  return <p>Redirecting...</p>;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getJobs } from "../api/jobs";
-import { Job } from "../types/job";
+import type { Job } from "../types/job";
 import AddJobModal from "../components/AddJobModal";
 
 const statusColors: Record<Job['status'], string> = {
