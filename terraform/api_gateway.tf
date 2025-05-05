@@ -36,6 +36,60 @@ resource "aws_api_gateway_integration" "proxy_lambda" {
   uri                     = aws_lambda_function.job_tracker_lambda.invoke_arn
 }
 
+# Add unauthenticated OPTIONS method to /api/{proxy+} for CORS preflight
+resource "aws_api_gateway_method" "api_proxy_options" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.api_proxy.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+# Mock response for OPTIONS method
+resource "aws_api_gateway_integration" "api_proxy_options" {
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_resource.api_proxy.id
+  http_method             = aws_api_gateway_method.api_proxy_options.http_method
+  type                    = "MOCK"
+  integration_http_method = "POST"
+  passthrough_behavior    = "NEVER"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Add CORS headers to mock response
+resource "aws_api_gateway_integration_response" "api_proxy_options" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.api_proxy.id
+  http_method = aws_api_gateway_method.api_proxy_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'https://dcli3b34ssmw2.cloudfront.net/'" #TODO: use env var
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
+  }
+
+  response_templates = {
+    "application/json" = ""
+  }
+}
+
+# Allow headers to be returned in response
+resource "aws_api_gateway_method_response" "api_proxy_options" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.api_proxy.id
+  http_method = aws_api_gateway_method.api_proxy_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+  }
+}
+
+
 # Root path (/) should not be protected
 resource "aws_api_gateway_method" "root_any" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
