@@ -1,4 +1,4 @@
-import { signInWithRedirect } from "@aws-amplify/auth"
+import { signInWithRedirect } from "aws-amplify/auth"
 
 const Login = () => {
     return (

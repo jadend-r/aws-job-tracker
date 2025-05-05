@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@aws-amplify/auth": "^6.12.4",
-    "@aws-amplify/core": "^6.11.4",
+    "@aws-amplify/ui-react": "^6.11.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -13,6 +12,7 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "aws-amplify": "^6.14.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.5.3",
