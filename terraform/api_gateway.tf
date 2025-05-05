@@ -71,7 +71,7 @@ resource "aws_api_gateway_integration_response" "api_proxy_options_integration_r
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = "'https://dcli3b34ssmw2.cloudfront.net/'" #TODO: use env var
+    "method.response.header.Access-Control-Allow-Origin"  = "'https://dcli3b34ssmw2.cloudfront.net'" #TODO: use env var
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,OPTIONS'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
   }
