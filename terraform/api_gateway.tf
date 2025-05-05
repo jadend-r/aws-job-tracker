@@ -67,7 +67,7 @@ resource "aws_api_gateway_integration" "api_proxy_options_integration" {
 resource "aws_api_gateway_integration_response" "api_proxy_options_integration_response" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.api_proxy.id
-  http_method = aws_api_gateway_method.api_proxy_options_integration.http_method
+  http_method = aws_api_gateway_integration.api_proxy_options_integration.http_method
   status_code = "200"
 
   response_parameters = {
@@ -85,7 +85,7 @@ resource "aws_api_gateway_integration_response" "api_proxy_options_integration_r
 resource "aws_api_gateway_method_response" "api_proxy_options_method_response" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.api_proxy.id
-  http_method = aws_api_gateway_method.api_proxy_options_integration_response.http_method
+  http_method = aws_api_gateway_integration_response.api_proxy_options_integration_response.http_method
   status_code = "200"
 
   response_parameters = {
