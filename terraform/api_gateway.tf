@@ -17,20 +17,26 @@ resource "aws_api_gateway_resource" "api_proxy" {
   path_part   = "{proxy+}"
 }
 
-# Protect /api/* with Cognito
-resource "aws_api_gateway_method" "proxy_any" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.api_proxy.id
-  http_method   = "ANY"
+locals {
+  protected_methods = ["GET", "POST", "PUT", "DELETE"]
+}
+
+# [GET, POST, PUT, DELETE] methods for /api/{proxy+}
+resource "aws_api_gateway_method" "proxy_methods" {
+  for_each     = toset(local.protected_methods)
+  rest_api_id  = aws_api_gateway_rest_api.api.id
+  resource_id  = aws_api_gateway_resource.api_proxy.id
+  http_method  = each.key
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.cognito.id
 }
 
-# /api/* → Lambda
-resource "aws_api_gateway_integration" "proxy_lambda" {
+# [GET, POST, PUT, DELETE] /api/* -> Lambda integration
+resource "aws_api_gateway_integration" "proxy_methods_integration" {
+  for_each                = aws_api_gateway_method.proxy_methods
   rest_api_id             = aws_api_gateway_rest_api.api.id
   resource_id             = aws_api_gateway_resource.api_proxy.id
-  http_method             = aws_api_gateway_method.proxy_any.http_method
+  http_method             = each.key
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.job_tracker_lambda.invoke_arn
