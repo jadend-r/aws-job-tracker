@@ -7,13 +7,13 @@ const instance = axios.create({
   }
 });
 
-// // Optional: Add interceptors for auth, error logging, etc.
-// instance.interceptors.response.use(
-//   res => res,
-//   err => {
-//     console.error('API error:', err.response?.data || err.message);
-//     return Promise.reject(err);
-//   }
-// );
+// Request interceptor to add cognito auth token
+instance.interceptors.request.use((config) => {
+  const token = localStorage.getItem("authToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export default instance;
