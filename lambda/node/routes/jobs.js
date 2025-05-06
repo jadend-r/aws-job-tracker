@@ -70,7 +70,7 @@ exports.getJobById = async (event, id) => {
 exports.createJob = async (event) => {
   const userId = event.requestContext.authorizer.claims.sub;
   const newApp = JSON.parse(event.body || '{}');
-  const jobId = Date.now().toString(); // you can use uuid instead
+  const jobId = crypto.randomUUID();
 
   const item = {
     userId,
