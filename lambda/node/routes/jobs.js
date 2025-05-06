@@ -1,53 +1,172 @@
 const { defaultHeaders } = require("../lib/response.js");
 
-let fakeDB = [
-    { id: 1, company: 'Amazon', role: 'SWE', status: 'Applied', dateApplied: '2025-04-01' },
-  ];
-  
-  exports.getJobs = async () => ({
-    statusCode: 200,
-    headers: defaultHeaders,
-    body: JSON.stringify(fakeDB),
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { PutCommand, GetCommand, UpdateCommand, DeleteCommand, QueryCommand, DynamoDBDocumentClient } = require("@aws-sdk/lib-dynamodb");
+
+const client = new DynamoDBClient({ region: "us-east-1" });
+const ddb = DynamoDBDocumentClient.from(client);
+
+const jobTableName = "Applications"
+
+exports.getJobs = async (event) => {
+  const userId = event.requestContext.authorizer.claims.sub;
+
+  const getJobsCommand = new QueryCommand({
+    TableName: jobTableName,
+    KeyConditionExpression: "userId = :uid",
+    ExpressionAttributeValues: {
+      ":uid": userId,
+    },
   });
-  
-  exports.getJobById = async (event, id) => {
-    const app = fakeDB.find(a => a.id === id);
-    return app
-      ? { statusCode: 200, body: JSON.stringify(app) }
-      : { statusCode: 404, body: JSON.stringify({ error: 'Not found' }) };
+
+  try {
+    const result = await ddb.send(getJobsCommand);
+
+    return {
+      statusCode: 200,
+      headers: defaultHeaders,
+      body: JSON.stringify(result.Items),
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      statusCode: 500,
+      headers: defaultHeaders,
+      body: JSON.stringify({ error: "Failed to get job applications" }),
+    };
+  }
+
+}
+
+exports.getJobById = async (event, id) => {
+  const userId = event.requestContext.authorizer.claims.sub;
+
+  const getJobByIdCommand = new GetCommand({
+    TableName: jobTableName,
+    Key: {
+      userId: userId,
+      jobId: id
+    }
+  });
+
+  try {
+    const result = await ddb.send(getJobByIdCommand);
+
+    return {
+      statusCode: 200,
+      headers: defaultHeaders,
+      body: JSON.stringify(result.Items),
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      statusCode: 500,
+      headers: defaultHeaders,
+      body: JSON.stringify({ error: "Failed to get job application" }),
+    };
+  }
+};
+
+exports.createJob = async (event) => {
+  const userId = event.requestContext.authorizer.claims.sub;
+  const newApp = JSON.parse(event.body || '{}');
+  const jobId = Date.now().toString(); // you can use uuid instead
+
+  const item = {
+    userId,
+    jobId,
+    company: newApp.company,
+    role: newApp.role,
+    status: newApp.status,
+    dateApplied: newApp.dateApplied || new Date().toISOString().split("T")[0],
   };
-  
-  exports.createJob = async (event) => {
-    const newApp = JSON.parse(event.body || '{}');
-    newApp.id = fakeDB.length + 1;
-    newApp.dateApplied = newApp.dateApplied || new Date().toISOString().split('T')[0];
-    fakeDB.push(newApp);
+
+  try {
+    await ddb.send(new PutCommand({
+      TableName: jobTableName,
+      Item: item,
+    }));
+
     return {
       statusCode: 201,
-      body: JSON.stringify({ message: 'Application added', data: newApp }),
+      headers: defaultHeaders,
+      body: JSON.stringify({ message: "Application added", data: item }),
     };
-  };
-  
-  exports.updateJob = async (event, id) => {
-    const appIndex = fakeDB.findIndex(a => a.id === id);
-    if (appIndex === -1) return { statusCode: 404, body: JSON.stringify({ error: 'Not found' }) };
-  
-    const updates = JSON.parse(event.body || '{}');
-    fakeDB[appIndex] = { ...fakeDB[appIndex], ...updates };
+  } catch (err) {
+    console.error(err);
+    return {
+      statusCode: 500,
+      headers: defaultHeaders,
+      body: JSON.stringify({ error: "Failed to save job application" }),
+    };
+  }
+};
+
+exports.updateJob = async (event, id) => {
+  const userId = event.requestContext.authorizer.claims.sub;
+  const updates = JSON.parse(event.body || '{}');
+
+  const updateExpressions = [];
+  const expressionValues  = {};
+  for (const key in updates) {
+    updateExpressions.push(`${key} = :${key}`);
+    expressionValues[`:${key}`] = updates[key];
+  }
+
+  const command = new UpdateCommand({
+    TableName: jobTableName,
+    Key: {
+      userId: userId,
+      jobId: id
+    },
+    UpdateExpression: `SET ${updateExpressions.join(", ")}`,
+    ExpressionAttributeValues: expressionValues,
+    ReturnValues: "ALL_NEW",
+  });
+
+  try {
+    await ddb.send(command)
+
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Updated', data: fakeDB[appIndex] }),
-    };
-  };
-  
-  exports.deleteJob = async (event, id) => {
-    const appIndex = fakeDB.findIndex(a => a.id === id);
-    if (appIndex === -1) return { statusCode: 404, body: JSON.stringify({ error: 'Not found' }) };
-  
-    const deleted = fakeDB.splice(appIndex, 1)[0];
+      headers: defaultHeaders,
+      body: JSON.stringify({ message: "Update successful"})
+    }
+  } catch (err) {
+    console.error(err);
     return {
-      statusCode: 200,
-      body: JSON.stringify({ message: 'Deleted', data: deleted }),
-    };
-  };
+      statusCode: 500,
+      headers: defaultHeaders,
+      body: JSON.stringify({ error: "Failed to update job application"})
+    }
+  }
+};
+
+exports.deleteJob = async (event, id) => {
+  const userId = event.requestContext.authorizer.claims.sub;
   
+  const deleteJobByIdCommand = new DeleteCommand({
+    TableName: jobTableName,
+    Key: {
+      userId: userId,
+      jobId: id
+    }
+  });
+
+  try {
+    const result = await ddb.send(deleteJobByIdCommand);
+
+    return {
+      statusCode: 204,
+      headers: defaultHeaders,
+      body: JSON.stringify({ message: `Job ${id} successfully deleted` }),
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      statusCode: 500,
+      headers: defaultHeaders,
+      body: JSON.stringify({ error: "Failed to delete job application" }),
+    };
+  }
+};
