@@ -1,5 +1,5 @@
-import { Amplify } from "@aws-amplify/core";
-import type { ResourcesConfig } from "@aws-amplify/core";
+import { Amplify } from "aws-amplify";
+import type { ResourcesConfig } from "aws-amplify";
 
 const config: ResourcesConfig = {
   Auth: {
@@ -18,7 +18,6 @@ const config: ResourcesConfig = {
     }
   }
 }
-
 
 Amplify.configure(config)
 
