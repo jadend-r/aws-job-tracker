@@ -10,7 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      REACT_APP_API_BASE: ${{ secrets.REACT_APP_API_BASE }}
+      REACT_APP_API_BASE: ${{ vars.REACT_APP_API_BASE }}
+      REACT_APP_COGNITO_USER_POOL_ID: ${{ vars.REACT_APP_COGNITO_USER_POOL_ID }}
+      REACT_APP_COGNITO_USER_POOL_CLIENT_ID: ${{ vars.REACT_APP_COGNITO_USER_POOL_CLIENT_ID }}
+      REACT_APP_COGNITO_DOMAIN: ${{ vars.REACT_APP_COGNITO_DOMAIN }}
+      REACT_APP_REDIRECT_SIGN_IN: ${{ vars.REACT_APP_REDIRECT_SIGN_IN }}
+      REACT_APP_REDIRECT_SIGN_OUT: ${{ vars.REACT_APP_REDIRECT_SIGN_OUT }}
 
     steps:
       - name: 📥 Checkout Code
