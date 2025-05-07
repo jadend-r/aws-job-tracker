@@ -56,7 +56,6 @@ resource "aws_api_gateway_integration" "api_proxy_options_integration" {
   resource_id             = aws_api_gateway_resource.api_proxy.id
   http_method             = aws_api_gateway_method.api_proxy_options_method.http_method
   type                    = "MOCK"
-  integration_http_method = "POST"
   passthrough_behavior    = "NEVER"
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
