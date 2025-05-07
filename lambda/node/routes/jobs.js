@@ -1,4 +1,5 @@
 const { defaultHeaders } = require("../lib/response.js");
+const crypto = require("crypto");
 
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { PutCommand, GetCommand, UpdateCommand, DeleteCommand, QueryCommand, DynamoDBDocumentClient } = require("@aws-sdk/lib-dynamodb");
