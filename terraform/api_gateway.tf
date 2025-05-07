@@ -23,10 +23,10 @@ locals {
 
 # [GET, POST, PUT, DELETE] methods for /api/{proxy+}
 resource "aws_api_gateway_method" "proxy_methods" {
-  for_each      = toset(local.protected_methods)
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.api_proxy.id
-  http_method   = each.key
+  for_each     = toset(local.protected_methods)
+  rest_api_id  = aws_api_gateway_rest_api.api.id
+  resource_id  = aws_api_gateway_resource.api_proxy.id
+  http_method  = each.key
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.cognito.id
 }
@@ -136,37 +136,16 @@ resource "aws_api_gateway_deployment" "deployment" {
 
   triggers = {
     redeployment = sha1(jsonencode({
-      lambda_code_hash = aws_lambda_function.job_tracker_lambda.source_code_hash
-
-      proxy_methods = local.protected_methods
-
-      root = {
-        method = aws_api_gateway_method.root_any.http_method
-        integration = {
-          type = aws_api_gateway_integration.root_lambda.type
-          uri  = aws_api_gateway_integration.root_lambda.uri
-        }
-      }
-
-      options = {
-        method = aws_api_gateway_method.api_proxy_options_method.http_method
-        integration = {
-          type                    = aws_api_gateway_integration.api_proxy_options_integration.type
-          integration_http_method = aws_api_gateway_integration.api_proxy_options_integration.integration_http_method
-          passthrough_behavior    = aws_api_gateway_integration.api_proxy_options_integration.passthrough_behavior
-          request_templates       = aws_api_gateway_integration.api_proxy_options_integration.request_templates
-        }
-        response = {
-          headers = {
-            allow_origin  = aws_api_gateway_integration_response.api_proxy_options_integration_response.response_parameters["method.response.header.Access-Control-Allow-Origin"]
-            allow_methods = aws_api_gateway_integration_response.api_proxy_options_integration_response.response_parameters["method.response.header.Access-Control-Allow-Methods"]
-            allow_headers = aws_api_gateway_integration_response.api_proxy_options_integration_response.response_parameters["method.response.header.Access-Control-Allow-Headers"]
-          }
-        }
-      }
+      root_integration     = aws_api_gateway_integration.root_lambda.id
+      root_method          = aws_api_gateway_method.root_any.id
+      proxy_methods        = sort([for m in aws_api_gateway_method.proxy_methods : m.id])
+      proxy_integrations   = sort([for i in aws_api_gateway_integration.proxy_methods_integration : i.id])
+      options_method       = aws_api_gateway_method.api_proxy_options_method.id
+      options_integration  = aws_api_gateway_integration.api_proxy_options_integration.id
+      options_response     = aws_api_gateway_integration_response.api_proxy_options_integration_response.id
+      options_method_resp  = aws_api_gateway_method_response.api_proxy_options_method_response.id
     }))
   }
-
 
 
   lifecycle {
