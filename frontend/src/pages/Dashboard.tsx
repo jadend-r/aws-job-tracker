@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { getJobs } from "../api/jobs";
+import { getJobs, addJob } from "../api/jobs";
 import type { Job } from "../types/job";
 import AddJobModal from "../components/AddJobModal";
+import { toast } from "react-toastify";
 
 const statusColors: Record<Job['status'], string> = {
     Applied: 'bg-blue-100 text-blue-700',
@@ -21,11 +22,20 @@ const Dashboard = () => {
     const rejected = jobs.filter(j => j.status === 'Rejected').length;
 
     useEffect(() => {
-        getJobs().then(setJobs).finally(() => {/*setIsLoading(false)*/});
+        getJobs()
+            .then(setJobs)
+            .finally(() => {/*setIsLoading(false)*/ });
     }, []);
 
-    const handleAddJob = (job: Job) => {
-        setJobs([...jobs, job]);
+    const handleAddJob = (job: Omit<Job, 'jobId'>) => {
+        addJob(job)
+            .then((savedJob) => { 
+                toast.success(`Successfully added job: ${savedJob.company} - ${savedJob.position}`);
+                setJobs([...jobs, savedJob]); 
+            })
+            .catch(() => {
+                toast.error("Failed to save job. Please try again");
+            });
     };
 
     return (
@@ -43,7 +53,7 @@ const Dashboard = () => {
             {/* Add Job Button */}
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Applications</h2>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow" onClick={() => {setIsAddJobModalOpen(true)}}>
+                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow" onClick={() => { setIsAddJobModalOpen(true) }}>
                     + Add Job
                 </button>
             </div>

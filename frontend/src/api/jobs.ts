@@ -6,7 +6,7 @@ export async function getJobs(): Promise<Job[]> {
   return res.data;
 }
 
-export async function addJob(job: Omit<Job, 'id'>): Promise<Job> {
+export async function addJob(job: Omit<Job, 'jobId'>): Promise<Job> {
   const res = await axios.post('/jobs', job);
   return res.data;
 }

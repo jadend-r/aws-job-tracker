@@ -4,11 +4,11 @@ import type { Job } from '../types/job';
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (job: Job) => void;
+  onSubmit: (job: Omit<Job, 'jobId'>) => void;
 };
 
 const AddJobModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
-  const [form, setForm] = useState<Job>({
+  const [form, setForm] = useState<Omit<Job, 'jobId'>>({
     company: '',
     position: '',
     status: 'Applied',

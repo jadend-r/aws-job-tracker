@@ -76,7 +76,7 @@ exports.createJob = async (event) => {
     userId,
     jobId,
     company: newApp.company,
-    role: newApp.role,
+    position: newApp.position,
     status: newApp.status,
     dateApplied: newApp.dateApplied || new Date().toISOString().split("T")[0],
   };
