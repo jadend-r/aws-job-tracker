@@ -91,7 +91,7 @@ exports.createJob = async (event) => {
     return {
       statusCode: 201,
       headers: defaultHeaders,
-      body: JSON.stringify({ message: "Application added", data: item }),
+      body: JSON.stringify(item),
     };
   } catch (err) {
     console.error(err);
