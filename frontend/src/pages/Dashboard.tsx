@@ -14,6 +14,10 @@ const statusColors: Record<Job['status'], string> = {
 const Dashboard = () => {
     const [jobs, setJobs] = useState<Job[]>([]);
     const [isAddJobModalOpen, setIsAddJobModalOpen] = useState<boolean>(false);
+
+    const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
+    const [editedStatus, setEditedStatus] = useState<Job['status']>('Applied');
+
     //const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const total = jobs.length;
@@ -29,14 +33,34 @@ const Dashboard = () => {
 
     const handleAddJob = (job: Omit<Job, 'jobId'>) => {
         addJob(job)
-            .then((savedJob) => { 
+            .then((savedJob) => {
                 toast.success(`Successfully added job: ${savedJob.company} - ${savedJob.position}`);
-                setJobs([...jobs, savedJob]); 
+                setJobs([...jobs, savedJob]);
             })
             .catch(() => {
                 toast.error("Failed to save job. Please try again");
             });
     };
+
+    const handleStatusUpdate = (jobId: string) => {
+        try {
+          // Replace this with your actual update API call
+          const updatedJobs = jobs.map(job =>
+            job.jobId === jobId ? { ...job, status: editedStatus } : job
+          );
+      
+          // TODO: call backend update API here, e.g.:
+          // await updateJobStatus(jobId, editedStatus);
+      
+          setJobs(updatedJobs);
+          toast.success("Status updated!");
+        } catch (err) {
+          toast.error("Failed to update status.");
+        } finally {
+          setEditingStatusId(null);
+        }
+      };
+      
 
     return (
         <div className="p-6">
@@ -75,9 +99,33 @@ const Dashboard = () => {
                                 <td className="py-3 px-4">{job.company}</td>
                                 <td className="py-3 px-4">{job.position}</td>
                                 <td className="py-3 px-4">
-                                    <span className={`px-2 py-1 rounded-full text-sm font-medium ${statusColors[job.status]}`}>
-                                        {job.status}
-                                    </span>
+                                    <td className="py-3 px-4">
+                                        {editingStatusId === job.jobId ? (
+                                            <select
+                                                className="px-2 py-1 rounded-full text-sm font-medium border"
+                                                value={editedStatus}
+                                                onChange={(e) => setEditedStatus(e.target.value as Job['status'])}
+                                                onBlur={() => handleStatusUpdate(job.jobId)}
+                                            >
+                                                {(Object.keys(statusColors) as Job['status'][]).map((status) => (
+                                                    <option key={status} value={status}>
+                                                        {status}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            <span
+                                                className={`px-2 py-1 rounded-full text-sm font-medium cursor-pointer ${statusColors[job.status]}`}
+                                                onClick={() => {
+                                                    setEditingStatusId(job.jobId);
+                                                    setEditedStatus(job.status);
+                                                }}
+                                            >
+                                                {job.status}
+                                            </span>
+                                        )}
+                                    </td>
+
                                 </td>
                                 <td className="py-3 px-4">{job.dateApplied}</td>
                             </tr>
