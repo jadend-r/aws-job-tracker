@@ -22,11 +22,13 @@ exports.getJobs = async (event) => {
 
   try {
     const result = await ddb.send(getJobsCommand);
+    const allJobs = result.Items || [];
+    const jobsNoUid = allJobs.map(({userId, ...rest}) => rest);
 
     return {
       statusCode: 200,
       headers: defaultHeaders,
-      body: JSON.stringify(result.Items),
+      body: JSON.stringify(jobsNoUid),
     };
   } catch (err) {
     console.error(err);
@@ -73,7 +75,7 @@ exports.createJob = async (event) => {
   const newApp = JSON.parse(event.body || '{}');
   const jobId = crypto.randomUUID();
 
-  const item = {
+  const newJob = {
     userId,
     jobId,
     company: newApp.company,
@@ -85,13 +87,15 @@ exports.createJob = async (event) => {
   try {
     await ddb.send(new PutCommand({
       TableName: jobTableName,
-      Item: item,
+      Item: newJob,
     }));
+
+    const { userId, ...newJobNoUid } = newJob;
 
     return {
       statusCode: 201,
       headers: defaultHeaders,
-      body: JSON.stringify(item),
+      body: JSON.stringify(newJobNoUid),
     };
   } catch (err) {
     console.error(err);
