@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getJobs, addJob } from "../api/jobs";
+import { getJobs, addJob, updateJobStatus } from "../api/jobs";
 import type { Job } from "../types/job";
 import AddJobModal from "../components/AddJobModal";
 import { toast } from "react-toastify";
@@ -43,22 +43,18 @@ const Dashboard = () => {
     };
 
     const handleStatusUpdate = (jobId: string) => {
-        try {
-          // Replace this with your actual update API call
-          const updatedJobs = jobs.map(job =>
-            job.jobId === jobId ? { ...job, status: editedStatus } : job
-          );
-      
-          // TODO: call backend update API here, e.g.:
-          // await updateJobStatus(jobId, editedStatus);
-      
-          setJobs(updatedJobs);
-          toast.success("Status updated!");
-        } catch (err) {
-          toast.error("Failed to update status.");
-        } finally {
-          setEditingStatusId(null);
-        }
+        updateJobStatus(jobId, editedStatus)
+            .then(() => {
+                toast.success("Updated!");
+                setJobs(
+                    jobs.map(job =>
+                        job.jobId === jobId ? { ...job, status: editedStatus } : job
+                      )
+                );
+            })
+            .catch(() => {
+                toast.error("Failed to update job status. Please try again");
+            });
       };
       
 

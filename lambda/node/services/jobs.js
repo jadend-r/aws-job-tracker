@@ -202,7 +202,7 @@ exports.updateJobStatus = async (event, id) => {
       "#s": "status",
     },
     ExpressionAttributeValues: {
-      ":newStatus": newStatus,
+      ":newStatus": status,
     },
     ReturnValues: "ALL_NEW"
   });
@@ -213,7 +213,7 @@ exports.updateJobStatus = async (event, id) => {
     return {
       statusCode: 200,
       headers: defaultHeaders,
-      body: JSON.stringify(result.Attr)
+      body: JSON.stringify(result.Attributes)
     }
   } catch (err) {
     console.error(err);
