@@ -14,3 +14,8 @@ export async function addJob(job: Omit<Job, 'jobId'>): Promise<Job> {
 export async function deleteJob(id: string): Promise<void> {
   await axios.delete(`/jobs/${id}`);
 }
+
+export async function updateJobStatus(jobId: string, status: Job['status']): Promise<Job> {
+  const res = await axios.patch(`/jobs/${jobId}/status`, { status });
+  return res.data;
+}

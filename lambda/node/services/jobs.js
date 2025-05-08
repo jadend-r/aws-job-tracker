@@ -7,7 +7,7 @@ const { PutCommand, GetCommand, UpdateCommand, DeleteCommand, QueryCommand, Dyna
 const client = new DynamoDBClient({ region: "us-east-1" });
 const ddb = DynamoDBDocumentClient.from(client);
 
-const jobTableName = "Applications"
+const jobTableName = process.env.JOBS_TABLE_NAME;
 
 exports.getJobs = async (event) => {
   const userId = event.requestContext.authorizer.claims.sub;
@@ -113,9 +113,11 @@ exports.updateJob = async (event, id) => {
 
   const updateExpressions = [];
   const expressionValues  = {};
+  const expressionNames = {};
   for (const key in updates) {
-    updateExpressions.push(`${key} = :${key}`);
+    updateExpressions.push(`#${key} = :${key}`);
     expressionValues[`:${key}`] = updates[key];
+    expressionNames[`#${key}`] = key
   }
 
   const command = new UpdateCommand({
@@ -126,11 +128,12 @@ exports.updateJob = async (event, id) => {
     },
     UpdateExpression: `SET ${updateExpressions.join(", ")}`,
     ExpressionAttributeValues: expressionValues,
+    ExpressionAttributeNames: expressionNames,
     ReturnValues: "ALL_NEW",
   });
 
   try {
-    await ddb.send(command)
+    await ddb.send(command);
 
     return {
       statusCode: 200,
@@ -175,3 +178,50 @@ exports.deleteJob = async (event, id) => {
     };
   }
 };
+
+exports.updateJobStatus = async (event, id) => {
+  const userId = event.requestContext.authorizer.claims.sub;
+  const { status } = JSON.parse(event.body || {});
+
+  const allowedStatuses = ['Applied', 'Interview', 'Offer', 'Rejected'];
+  if (!allowedStatuses.includes(status)) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid status value' }),
+    };
+  }
+
+  const command = new UpdateCommand({
+    TableName:jobTableName,
+    Key: {
+      userId: userId,
+      jobId: jobId,
+    },
+    UpdateExpression: "SET #s = :newStatus",
+    ExpressionAttributeNames: {
+      "#s": "status",
+    },
+    ExpressionAttributeValues: {
+      ":newStatus": newStatus,
+    },
+    ReturnValues: "ALL_NEW"
+  });
+
+  try {
+    const result = await ddb.send(command);
+
+    return {
+      statusCode: 200,
+      headers: defaultHeaders,
+      body: JSON.stringify(result.Attr)
+    }
+  } catch (err) {
+    console.error(err);
+    return {
+      statusCode: 500,
+      headers: defaultHeaders,
+      body: JSON.stringify({ error: "Failed to update job application"})
+    }
+  }
+
+}

@@ -7,7 +7,7 @@ resource "aws_lambda_function" "job_tracker_lambda" {
 
   environment {
     variables = {
-      TABLE_NAME = aws_dynamodb_table.Applications.name
+      JOBS_TABLE_NAME = aws_dynamodb_table.Applications.name
     }
   }
 
