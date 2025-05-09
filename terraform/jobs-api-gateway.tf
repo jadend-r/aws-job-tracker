@@ -73,7 +73,6 @@ resource "aws_api_gateway_method" "jobs_id_methods" {
 
 resource "aws_api_gateway_integration" "jobs_id_methods" {
   for_each                = local.jobs_id_methods
-  for_each                = local.jobs_id_methods
   rest_api_id             = aws_api_gateway_rest_api.api.id
   resource_id             = each.value.resource
   http_method             = each.key
