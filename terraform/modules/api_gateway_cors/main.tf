@@ -30,7 +30,7 @@ resource "aws_api_gateway_integration_response" "options" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'https://dcli3b34ssmw2.cloudfront.net'"
     "method.response.header.Access-Control-Allow-Methods" = "'${var.allowed_methods}'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
   }
