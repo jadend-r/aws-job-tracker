@@ -195,7 +195,7 @@ exports.updateJobStatus = async (event, id) => {
     TableName:jobTableName,
     Key: {
       userId: userId,
-      jobId: jobId,
+      jobId: id,
     },
     UpdateExpression: "SET #s = :newStatus",
     ExpressionAttributeNames: {
