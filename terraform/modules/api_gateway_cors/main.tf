@@ -26,7 +26,7 @@ resource "aws_api_gateway_integration" "options" {
 resource "aws_api_gateway_integration_response" "options" {
   rest_api_id = var.rest_api_id
   resource_id = var.resource_id
-  http_method = aws_api_gateway_method.options.http_method
+  http_method = aws_api_gateway_integration.options.http_method
   status_code = "200"
 
   response_parameters = {
