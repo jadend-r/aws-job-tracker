@@ -107,7 +107,7 @@ resource "aws_api_gateway_integration" "patch_status" {
 
 # /api/jobs
 module "cors_jobs" {
-  source        = "../modules/api_gateway_cors"
+  source        = "./modules/api_gateway_cors"
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.jobs.id
   allowed_methods = "GET,POST,OPTIONS"
@@ -115,7 +115,7 @@ module "cors_jobs" {
 
 # /api/jobs/{id}
 module "cors_jobs_id" {
-  source        = "../modules/api_gateway_cors"
+  source        = "./modules/api_gateway_cors"
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.jobs_id.id
   allowed_methods = "GET,PUT,DELETE,OPTIONS"
@@ -123,7 +123,7 @@ module "cors_jobs_id" {
 
  # /api/jobs/{id}/status
 module "cors_jobs_id_status" {
-  source        = "../modules/api_gateway_cors"
+  source        = "./modules/api_gateway_cors"
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.jobs_id_status.id
   allowed_methods = "PATCH,OPTIONS"
