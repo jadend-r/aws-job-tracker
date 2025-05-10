@@ -15,8 +15,6 @@ const Dashboard = () => {
     const [jobs, setJobs] = useState<Job[]>([]);
     const [isAddJobModalOpen, setIsAddJobModalOpen] = useState<boolean>(false);
 
-    const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
-
     //const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const total = jobs.length;
@@ -48,14 +46,14 @@ const Dashboard = () => {
                 setJobs(
                     jobs.map(job =>
                         job.jobId === jobId ? { ...job, status: editedStatus } : job
-                      )
+                    )
                 );
             })
             .catch(() => {
                 toast.error("Failed to update job status. Please try again");
             });
-      };
-      
+    };
+
 
     return (
         <div className="p-6">
@@ -94,37 +92,24 @@ const Dashboard = () => {
                                 <td className="py-3 px-4">{job.company}</td>
                                 <td className="py-3 px-4">{job.position}</td>
                                 <td className="py-3 px-4">
-                                    <td className="py-3 px-4">
-                                        {editingStatusId === job.jobId ? (
-                                            <select
-                                                className="px-2 py-1 rounded-full text-sm font-medium border"
-                                                value={job.status}
-                                                onChange={(e) => {
-                                                    const newStatus = e.target.value as Job['status'];
-                                                    handleStatusUpdate(job.jobId, newStatus);
-                                                    setEditingStatusId(null)
-                                                }}
-                                                onBlur={() => setEditingStatusId(null)}
-                                            >
-                                                {(Object.keys(statusColors) as Job['status'][]).map((status) => (
-                                                    <option key={status} value={status}>
-                                                        {status}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        ) : (
-                                            <span
-                                                className={`px-2 py-1 rounded-full text-sm font-medium cursor-pointer ${statusColors[job.status]}`}
-                                                onClick={() => {
-                                                    setEditingStatusId(job.jobId);
-                                                }}
-                                            >
-                                                {job.status}
-                                            </span>
-                                        )}
-                                    </td>
-
+                                    <select
+                                        className={`appearance-none px-3 py-1 rounded-full text-sm font-medium border ${statusColors[job.status]}`}
+                                        value={job.status}
+                                        onChange={(e) => {
+                                            const newStatus = e.target.value as Job['status'];
+                                            if (newStatus !== job.status) {
+                                                handleStatusUpdate(job.jobId, newStatus);
+                                            }
+                                        }}
+                                    >
+                                        {(Object.keys(statusColors) as Job['status'][]).map((status) => (
+                                            <option key={status} value={status}>
+                                                {status}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </td>
+
                                 <td className="py-3 px-4">{job.dateApplied}</td>
                             </tr>
                         ))}
