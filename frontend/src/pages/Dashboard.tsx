@@ -16,7 +16,6 @@ const Dashboard = () => {
     const [isAddJobModalOpen, setIsAddJobModalOpen] = useState<boolean>(false);
 
     const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
-    const [editedStatus, setEditedStatus] = useState<Job['status']>('Applied');
 
     //const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -42,7 +41,7 @@ const Dashboard = () => {
             });
     };
 
-    const handleStatusUpdate = (jobId: string) => {
+    const handleStatusUpdate = (jobId: string, editedStatus: Job['status']) => {
         updateJobStatus(jobId, editedStatus)
             .then(() => {
                 toast.success("Updated!");
@@ -99,10 +98,10 @@ const Dashboard = () => {
                                         {editingStatusId === job.jobId ? (
                                             <select
                                                 className="px-2 py-1 rounded-full text-sm font-medium border"
-                                                value={editedStatus}
+                                                value={job.status}
                                                 onChange={(e) => {
-                                                    setEditedStatus(e.target.value as Job['status'])
-                                                    handleStatusUpdate(job.jobId)
+                                                    const newStatus = e.target.value as Job['status'];
+                                                    handleStatusUpdate(job.jobId, newStatus);
                                                     setEditingStatusId(null)
                                                 }}
                                                 onBlur={() => setEditingStatusId(null)}
