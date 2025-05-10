@@ -26,22 +26,22 @@ exports.handler = async (event) => {
 
   // GET /api/jobs/{id}
   if (resource === '/api/jobs/{id}' && httpMethod === 'GET') {
-    return getJobById(event, parseInt(pathParameters.id));
+    return getJobById(event, pathParameters.id);
   }
 
   // PUT /api/jobs/{id}
   if (resource === '/api/jobs/{id}' && httpMethod === 'PUT') {
-    return updateJob(event, parseInt(pathParameters.id));
+    return updateJob(event, pathParameters.id);
   }
 
   // DELETE /api/jobs/{id}
   if (resource === '/api/jobs/{id}' && httpMethod === 'DELETE') {
-    return deleteJob(event, parseInt(pathParameters.id));
+    return deleteJob(event, pathParameters.id);
   }
 
   // PATCH /api/jobs/{id}/status
   if (resource === '/api/jobs/{id}/status' && httpMethod === 'PATCH') {
-    return updateJobStatus(event, parseInt(pathParameters.id));
+    return updateJobStatus(event, pathParameters.id);
   }
 
   // ------------
