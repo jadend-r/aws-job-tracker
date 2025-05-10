@@ -117,7 +117,6 @@ const Dashboard = () => {
                                                 className={`px-2 py-1 rounded-full text-sm font-medium cursor-pointer ${statusColors[job.status]}`}
                                                 onClick={() => {
                                                     setEditingStatusId(job.jobId);
-                                                    setEditedStatus(job.status);
                                                 }}
                                             >
                                                 {job.status}
