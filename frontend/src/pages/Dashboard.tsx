@@ -100,8 +100,12 @@ const Dashboard = () => {
                                             <select
                                                 className="px-2 py-1 rounded-full text-sm font-medium border"
                                                 value={editedStatus}
-                                                onChange={(e) => setEditedStatus(e.target.value as Job['status'])}
-                                                onBlur={() => handleStatusUpdate(job.jobId)}
+                                                onChange={(e) => {
+                                                    setEditedStatus(e.target.value as Job['status'])
+                                                    handleStatusUpdate(job.jobId)
+                                                    setEditingStatusId(null)
+                                                }}
+                                                onBlur={() => setEditingStatusId(null)}
                                             >
                                                 {(Object.keys(statusColors) as Job['status'][]).map((status) => (
                                                     <option key={status} value={status}>
