@@ -9,7 +9,7 @@ app = FastAPI()
 s3 = boto3.client("s3")
 BUCKET = os.getenv("RESUME_BUCKET", "aws-job-tracker-prod-resumes")
 
-@app.post("/upload")
+@app.post("/api/resumes/upload")
 async def upload_resume(job_id: str = Form(...), file: UploadFile = File(...)):
     filename = f"{job_id}/{uuid4()}_{file.filename}"
     try:
@@ -18,7 +18,7 @@ async def upload_resume(job_id: str = Form(...), file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/preview")
+@app.get("/api/resumes/preview")
 def get_resume_preview(key: str):
     try:
         url = s3.generate_presigned_url("get_object", Params={"Bucket": BUCKET, "Key": key}, ExpiresIn=300)

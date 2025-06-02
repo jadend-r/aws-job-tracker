@@ -11,7 +11,7 @@ export async function addJob(job: Omit<Job, 'jobId'>, resumeFile?: File): Promis
   const savedJob = res.data;
    if (resumeFile) {
     const formData = new FormData();
-    formData.append('resume', resumeFile);
+    formData.append('file', resumeFile);
     formData.append('jobId', savedJob.jobId); 
 
     await axios.post('/resumes/upload', formData, {
