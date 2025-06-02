@@ -145,7 +145,7 @@ resource "aws_lambda_permission" "resume_api_gateway_permission" {
 module "cors_resumes_upload" {
   source        = "./modules/api_gateway_cors"
   rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.resumes_upload
+  resource_id   = aws_api_gateway_resource.resumes_upload.id
   allowed_methods = "POST,OPTIONS"
 }
 
@@ -153,6 +153,6 @@ module "cors_resumes_upload" {
 module "cors_resumes_preview" {
   source        = "./modules/api_gateway_cors"
   rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.resumes_preview
+  resource_id   = aws_api_gateway_resource.resumes_preview.id
   allowed_methods = "GET,OPTIONS"
 }
