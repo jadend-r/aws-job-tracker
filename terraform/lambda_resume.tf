@@ -17,7 +17,7 @@ resource "aws_lambda_function" "resume_lambda" {
 }
 
 resource "aws_s3_bucket" "resume_bucket" {
-  bucket = "job-tracker-resumes"
+  bucket = "aws-job-tracker-prod-resumes"
 }
 
 resource "aws_s3_bucket_public_access_block" "resume_bucket_block" {
