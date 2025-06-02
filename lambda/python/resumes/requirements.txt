@@ -1,3 +1,4 @@
 fastapi
 mangum
 boto3
+python-multipart
