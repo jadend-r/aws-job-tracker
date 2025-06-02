@@ -35,6 +35,15 @@ def test_get_jobs_success(mock_dynamo, event):
     assert len(body) == 1
     assert body[0]["company"] == "OpenAI"
 
+def test_get_jobs_failure(mock_dynamo, event):
+    event["httpMethod"] = "GET"
+    mock_dynamo.query.side_effect = Exception("DynamoDB error!")
+
+    response = handler(event)
+    assert response["statusCode"] == 500
+    body = json.loads(response["body"])
+    assert "Failed to get job applications" in body["error"]
+
 def test_get_job_by_id_success(mock_dynamo, event):
     event["resource"] = "/api/jobs/{id}"
     event["httpMethod"] = "GET"
