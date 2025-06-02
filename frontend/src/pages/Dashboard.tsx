@@ -28,8 +28,8 @@ const Dashboard = () => {
             .finally(() => {/*setIsLoading(false)*/ });
     }, []);
 
-    const handleAddJob = (job: Omit<Job, 'jobId'>) => {
-        addJob(job)
+    const handleAddJob = (job: Omit<Job, 'jobId'>, resumeFile?: File) => {
+        addJob(job, resumeFile)
             .then((savedJob) => {
                 toast.success(`Successfully added job: ${savedJob.company} - ${savedJob.position}`);
                 setJobs([...jobs, savedJob]);

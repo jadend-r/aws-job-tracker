@@ -6,9 +6,21 @@ export async function getJobs(): Promise<Job[]> {
   return res.data;
 }
 
-export async function addJob(job: Omit<Job, 'jobId'>): Promise<Job> {
+export async function addJob(job: Omit<Job, 'jobId'>, resumeFile?: File): Promise<Job> {
   const res = await axios.post('/jobs', job);
-  return res.data;
+  const savedJob = res.data;
+   if (resumeFile) {
+    const formData = new FormData();
+    formData.append('resume', resumeFile);
+    formData.append('jobId', savedJob.jobId); 
+
+    await axios.post('/resumes/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  }
+  return savedJob;
 }
 
 export async function deleteJob(id: string): Promise<void> {
