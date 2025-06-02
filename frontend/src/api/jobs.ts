@@ -14,11 +14,7 @@ export async function addJob(job: Omit<Job, 'jobId'>, resumeFile?: File): Promis
     formData.append('file', resumeFile);
     formData.append('jobId', savedJob.jobId); 
 
-    await axios.post('/resumes/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
+    await axios.post('/resumes/upload', formData);
   }
   return savedJob;
 }

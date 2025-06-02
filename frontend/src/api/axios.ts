@@ -2,10 +2,7 @@ import axios from 'axios';
 import { fetchAuthSession } from 'aws-amplify/auth';
 
 const instance = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE,
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  baseURL: process.env.REACT_APP_API_BASE
 });
 
 // Request interceptor to add cognito auth token
