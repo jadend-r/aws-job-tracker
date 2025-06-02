@@ -29,6 +29,12 @@ jobs:
           cd lambda/node
           zip -r job_tracker_lambda.zip .
 
+      - name: Install Python dependencies for Python Lambda
+        run: |
+          cd lambda/python/resumes
+          pip install --upgrade pip
+          pip install -r requirements.txt -t .
+          
       - name: 📦 Zip Python Lambda code
         run: |
           cd lambda/python/resumes
