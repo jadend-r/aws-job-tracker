@@ -1,0 +1,3 @@
+fastapi
+mangum
+boto3
