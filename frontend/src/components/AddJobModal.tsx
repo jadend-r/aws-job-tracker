@@ -4,7 +4,7 @@ import type { Job } from '../types/job';
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (job: Omit<Job, 'jobId'>) => void;
+  onSubmit: (job: Omit<Job, 'jobId'>, resumeFile?: File) => void;
 };
 
 const AddJobModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
@@ -15,16 +15,27 @@ const AddJobModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
     dateApplied: new Date().toLocaleDateString()
   });
 
+  const [resumeFile, setResumeFile] = useState<File | undefined>(undefined);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setResumeFile(e.target.files[0]);
+    } else {
+      setResumeFile(undefined);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.company || !form.position) return;
-    onSubmit(form);
+    onSubmit(form, resumeFile);
     onClose();
     setForm({ company: '', position: '', status: 'Applied', dateApplied: new Date().toLocaleDateString() });
+    setResumeFile(undefined);
   };
 
   if (!isOpen) return null;
@@ -61,6 +72,18 @@ const AddJobModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
             <option>Offer</option>
             <option>Rejected</option>
           </select>
+          <div>
+            <label className="block mb-1 font-medium">Resume (PDF)</label>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={handleFileChange}
+              className="w-full"
+            />
+            {resumeFile && (
+              <p className="text-sm text-gray-600 mt-1">Selected: {resumeFile.name}</p>
+            )}
+          </div>
           <div className="flex justify-end space-x-2">
             <button
               type="button"
