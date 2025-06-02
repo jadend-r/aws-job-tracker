@@ -150,7 +150,7 @@ module "cors_resumes_upload" {
 }
 
 # /api/resumes/preview
-module "cors_resumes_upload" {
+module "cors_resumes_preview" {
   source        = "./modules/api_gateway_cors"
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.resumes_preview
