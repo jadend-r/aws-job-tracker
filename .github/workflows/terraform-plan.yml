@@ -25,10 +25,15 @@ jobs:
       - name: 🛠 Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      - name: 📦 Zip Lambda code
+      - name: 📦 Zip Node Lambda code
         run: |
           cd lambda/node
           zip -r job_tracker_lambda.zip .
+
+      - name: 📦 Zip Python Lambda code
+        run: |
+          cd lambda/python/resumes
+          zip -r resume_lambda.zip .
 
       - name: 🧠 Terraform Init
         working-directory: terraform
