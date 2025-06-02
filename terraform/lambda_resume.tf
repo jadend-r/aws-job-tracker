@@ -137,3 +137,22 @@ resource "aws_lambda_permission" "resume_api_gateway_permission" {
   function_name = aws_lambda_function.resume_lambda.function_name
   principal     = "apigateway.amazonaws.com"
 }
+
+# -----------------
+# CORS for resume resources
+
+# /api/resumes/upload
+module "cors_resumes_upload" {
+  source        = "./modules/api_gateway_cors"
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.resumes_upload
+  allowed_methods = "POST,OPTIONS"
+}
+
+# /api/resumes/preview
+module "cors_resumes_upload" {
+  source        = "./modules/api_gateway_cors"
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.resumes_preview
+  allowed_methods = "GET,OPTIONS"
+}
