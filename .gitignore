@@ -8,3 +8,8 @@ lambda/package-lock.json
 terraform/.terraform.lock.hcl
 lambda/node/package-lock.json
 frontend/.env
+lambda/python/jobs/venv
+lambda/python/jobs/__pycache__
+lambda/python/jobs/tests/__pycache__
+lambda/python/jobs/services/__pycache__
+lambda/python/jobs/lib/__pycache__

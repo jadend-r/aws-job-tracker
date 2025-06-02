@@ -1,0 +1,33 @@
+name: Python Lambda Tests
+
+on:
+  push:
+    paths:
+      - "lambda/python/jobs/**"
+  pull_request:
+    paths:
+      - "lambda/python/jobs/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r lambda/python/jobs/requirements.txt
+
+    - name: Run tests
+      run: |
+        source venv/bin/activate
+        pytest lambda/python/jobs/tests --cov=lambda/python/jobs/services --cov=lambda/python/jobs/main
